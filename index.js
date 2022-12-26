@@ -1,5 +1,8 @@
 const http = require("http");
 const fs = require("fs");
+const dns = require("dns");
+const cowsay = require("cowsay");
+const argument = process.argv;
 const server = http.createServer((request, response) => {
   if (request.url === "/")
     response.end(`<h1>WELCOME TO EMPLOYEE MANAGEMENT SYSTEM</h1>`);
@@ -19,9 +22,9 @@ const server = http.createServer((request, response) => {
   } else if (request.url === "/alldetails") {
     fs.readFile("employee.txt", { encoding: "utf-8" }, (err, data) => {
       if (err) {
-        console.log("something went wrong");
+        console.log("errror has been occured");
       } else {
-        console.log(
+        response.end(
           cowsay.say({
             text: data,
           })
@@ -30,19 +33,16 @@ const server = http.createServer((request, response) => {
     });
     response.end("cow added");
   } else if (request.url === "/address") {
-    dns.lookup(website_name, (err, address) => {
+    dns.lookup(argument[2], (err, address) => {
       response.end(address);
     });
   } else if (request.url === "/delete") {
     fs.unlink("employee.txt", (err) => {
       if (err) {
-        console.log("something went wrong");
+        console.log("errror has been occured");
       }
       response.end("File has been successfully deleted");
     });
-  } else {
-    response.writeHead(404, { "Content-Type": "text/html" });
-    response.end("<h1>1Invalid API endpoint</h1>");
   }
 });
 
